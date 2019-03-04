@@ -19,7 +19,6 @@ function initMap() {
         },
         mapTypeControl: true,
         zoom: 12
-        //mapTypeId: 'hybrid'
     });
 
     // Map InfoWindow
@@ -99,15 +98,15 @@ function initMap() {
             google.maps.event.trigger(view.marker, "click");
         };
 
-        // Observable to hold list of locations
+        // Observable to hold list of venues
         this.viewList = ko.observableArray([]);
 
-      // Add each location (locations.js) to list (array) of View objects
+      // Add each venue (venues.js) to list (array) of View objects
         Venues.forEach(function (item) {
             self.viewList().push(new View(item));
         });
 
-        // Add a marker for each location in list of View objects
+        // Add a marker for each venue in list of View objects
         self.viewList().forEach(function (view) {
             var marker = new google.maps.Marker({
                 map: map,
@@ -134,15 +133,16 @@ function initMap() {
                     type: "GET",
                     url: FourSqUrl,
                     dataType: "json"
-                })
-                    .done(function (data) {
+                }).done(function (data) {
                         let response = data.response ? data.response : "";
                         let venue = response.venue ? data.venue : "";
                         view.name = response.venue.name;
                         view.shortUrl = response.venue.shortUrl;
                         view.photoUrl = response.venue.bestPhoto.prefix + "120x120" +
                             response.venue.bestPhoto.suffix;
-                    });
+                }).fail(function () {
+                        alert("An error occurred while trying to fetch data from Foursquare");
+                });
             });
         });
 
